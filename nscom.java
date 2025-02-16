@@ -84,7 +84,7 @@ public class nscom {
 
     // Read and send file contents
     try (FileInputStream fis = new FileInputStream(localFile)) {
-        sendFile(socket, fis, serverAddress, serverPort);  // ✅ Use the correct port
+       sendFile(socket, fis, serverAddress, serverPort, remoteFile);  // ✅ Use the correct port
     }
 
     System.out.println("Upload complete: " + remoteFile);
@@ -170,13 +170,34 @@ private static byte[] createRequestPacket(String filename, String mode) {
 
 
     
-    private static void sendFile(DatagramSocket socket, FileInputStream fis, InetAddress serverAddress, int serverPort) throws IOException {
+    private static void sendFile(DatagramSocket socket, FileInputStream fis, InetAddress serverAddress, int serverPort, String remoteFile) throws IOException {
     byte[] buffer = new byte[512];
     int bytesRead;
     int blockNumber = 1;
 
+    byte[] wrqPacket = createWriteRequestPacket(remoteFile, "octet");
+    DatagramPacket wrqSendPacket = new DatagramPacket(wrqPacket, wrqPacket.length, serverAddress, serverPort);
+    socket.send(wrqSendPacket);
+
+    byte[] responseBuffer = new byte[512];
+    DatagramPacket responsePacket = new DatagramPacket(responseBuffer, responseBuffer.length);
+    socket.receive(responsePacket);
+
+    int responseCode = responseBuffer[1];  // Second byte contains the opcode
+
+    if (responseCode == 5) { // ERROR packet received
+        System.out.println("Error: Remote file already exists. Aborting upload.");
+        return;
+    } else if (responseCode == 6) { // OACK received
+        System.out.println("Received OACK. Proceeding with upload...");
+    } else if (responseCode == 4) { // ACK received for WRQ
+        System.out.println("Received ACK for WRQ. Proceeding with upload...");
+    } else {
+        System.out.println("Unexpected response. Aborting upload.");
+        return;
+    }
+
     while ((bytesRead = fis.read(buffer)) != -1) {
-        // Create TFTP data packet: [0, 3, block #, data...]
         byte[] dataPacket = new byte[4 + bytesRead];
         dataPacket[0] = 0;
         dataPacket[1] = 3;  // DATA opcode
@@ -186,7 +207,6 @@ private static byte[] createRequestPacket(String filename, String mode) {
 
         DatagramPacket sendPacket = new DatagramPacket(dataPacket, dataPacket.length, serverAddress, serverPort);
         socket.send(sendPacket);
-        // System.out.println("Sent DATA block " + blockNumber);
 
         // Wait for ACK
         byte[] ackBuffer = new byte[4];
@@ -196,19 +216,19 @@ private static byte[] createRequestPacket(String filename, String mode) {
         if (ackBuffer[1] == 4) {  // ACK opcode
             int ackBlockNumber = ((ackBuffer[2] & 0xFF) << 8) | (ackBuffer[3] & 0xFF);
             if (ackBlockNumber == blockNumber) {
-                // System.out.println("Received ACK for block " + blockNumber);
                 blockNumber++;
             } else {
                 System.out.println("Unexpected ACK block number: " + ackBlockNumber);
             }
         } else {
-            System.out.println("Unexpected response received!");
+            System.out.println("Unexpected response received! Aborting upload.");
             break;
         }
     }
 
     System.out.println("File upload complete.");
 }
+
 
     
     private static byte[] createDataPacket(int blockNumber, byte[] data, int dataLength) {
