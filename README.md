@@ -16,7 +16,9 @@ open cmd as administrator, make sure you are in the file directory
 
 
    to see IP address: [ipconfig /all]
+   
    to see if tftp exists: tftp
+   
    to check port69: netstat -an | find "69"
    
 
