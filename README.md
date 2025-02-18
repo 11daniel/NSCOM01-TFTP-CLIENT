@@ -8,42 +8,25 @@ Ensure you have administrative privileges and navigate to the directory containi
 ### **2. Compile the Program**
 javac nscom.java
 
-markdown
-Copy
-Edit
-
 ### **3. Run the Program**
 #### **Usage:**
 java nscom
 
-bash
-Copy
-Edit
 This will display the required command format.
 
 #### **Command Format:**
 java nscom <server_ip> <upload/download> <local_file> <remote_file>
 
-markdown
-Copy
-Edit
-
 ### **4. Example Commands**
 #### **Download a File:**
 java nscom 192.168.1.190 download local1.java nscom.java
 
-pgsql
-Copy
-Edit
 This downloads `nscom.java` from the TFTP server and saves it as `local1.java` locally.  
 Ensure `nscom.java` exists on the server.
 
 #### **Upload a File:**
 java nscom 192.168.1.190 upload sjfitness.png copy.png
 
-markdown
-Copy
-Edit
 This uploads `sjfitness.png` from the local machine to the TFTP server as `copy.png`.  
 The remote file will be overwritten if it exists.
 
