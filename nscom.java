@@ -51,7 +51,6 @@ public class nscom {
 
     private static void showMenu() {
         System.out.println("\n===== TFTP Client =====");
-        System.out.println(" TFTP Client =====");
         System.out.println("1 - Download a file");
         System.out.println("2 - Upload a file");
         System.out.println("3 - Exit");
