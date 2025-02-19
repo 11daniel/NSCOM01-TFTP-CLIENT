@@ -34,8 +34,8 @@ Select an option:
 
 #### Download a File:
 ```sh
-Enter remote file: local1.java
-Enter local file: nscom.java
+Enter remote file: nscom.java
+Enter local file: local1.java
 ```
 This downloads `nscom.java` from the TFTP server and saves it as `local1.java` locally.
 Ensure `nscom.java` exists on the server.
