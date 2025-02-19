@@ -62,8 +62,8 @@ The remote file will be overwritten if it exists.
 
 | Test Case | Command | Expected Output |
 |-----------|---------|----------------|
-| **Download a file that exists** | `java nscom 192.168.1.190 download FileA.jpg FileA1.jpg` | `Download complete: FileA.jpg` |
-| **Download a non-existent file** | `java nscom 192.168.1.190 download FileB.jpg FileA.jpg` | `TFTP Error: File not found on the server.` |
+| **Download a file that exists** | ` Input Local File: FileA.jpg Input Remote File: FileJ.jpg` | `Download complete: FileJ.jpg` |
+| **Download a non-existent file** | `Input Local File: FileB.jpg Input Remote File: FileA.jpgg` | `TFTP Error: File not found on the server.` |
 | **Upload a file that exists locally** | `java nscom 192.168.1.190 upload FileA.jpg FileA.jpg` | `Upload complete: FileA.jpg` |
 | **Upload a non-existent local file** | `java nscom 192.168.1.190 upload missing.png FileA.jpg` | `Error: File missing.png does not exist.` |
 | **Try downloading to an existing file** | `java nscom 192.168.1.190 download FileA.jpg FileA.jpg` | `Error: File FileA.jpg already exists. Preventing overwrite.` |
