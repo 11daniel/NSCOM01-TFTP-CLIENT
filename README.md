@@ -15,7 +15,7 @@ javac nscom.java
 ```sh
 java nscom
 ```
-This will display the required command format.
+This will display the table format.
 
 #### Command Format:
 ```sh
@@ -26,14 +26,16 @@ java nscom <server_ip> <upload/download> <local_file> <remote_file>
 
 #### Download a File:
 ```sh
-java nscom 192.168.1.190 download local1.java nscom.java
+Input Local File: local1.java
+Input Remote File: nscom.java
 ```
 This downloads `nscom.java` from the TFTP server and saves it as `local1.java` locally.
 Ensure `nscom.java` exists on the server.
 
 #### Upload a File:
 ```sh
-java nscom 192.168.1.190 upload sjfitness.png copy.png
+Input Local File: sjfitness.png
+Input Remote File: copy.png
 ```
 This uploads `sjfitness.png` from the local machine to the TFTP server as `copy.png`.
 The remote file will be overwritten if it exists.
