@@ -77,14 +77,13 @@ public class nscom {
     DatagramPacket responsePacket = new DatagramPacket(responseBuffer, responseBuffer.length);
     socket.receive(responsePacket);
 
-    // **Fix: Update serverAddress and port from response**
     serverAddress = responsePacket.getAddress();
     int serverPort = responsePacket.getPort();
-    // System.out.println("Server assigned new port: " + serverPort);
+    System.out.println("Server assigned new port: " + serverPort);
 
     // Read and send file contents
     try (FileInputStream fis = new FileInputStream(localFile)) {
-       sendFile(socket, fis, serverAddress, serverPort, remoteFile);  // ✅ Use the correct port
+        sendFile(socket, fis, serverAddress, serverPort); 
     }
 
     System.out.println("Upload complete: " + remoteFile);
@@ -101,10 +100,6 @@ private static byte[] createRequestPacket(String filename, String mode) {
         dos.writeByte(0); // NULL terminator
         dos.writeBytes(mode);
         dos.writeByte(0); // NULL terminator
-        dos.write("tsize".getBytes());  // ✅ Adds tsize option
-        dos.writeByte(0);
-        dos.write(String.valueOf(new File(filename).length()).getBytes()); // File size in bytes
-        dos.writeByte(0);
     } catch (IOException e) {
         e.printStackTrace();
     }
@@ -170,32 +165,10 @@ private static byte[] createRequestPacket(String filename, String mode) {
 
 
     
-    private static void sendFile(DatagramSocket socket, FileInputStream fis, InetAddress serverAddress, int serverPort, String remoteFile) throws IOException {
+    private static void sendFile(DatagramSocket socket, FileInputStream fis, InetAddress serverAddress, int serverPort) throws IOException {
     byte[] buffer = new byte[512];
     int bytesRead;
     int blockNumber = 1;
-
-    byte[] wrqPacket = createWriteRequestPacket(remoteFile, "octet");
-    DatagramPacket wrqSendPacket = new DatagramPacket(wrqPacket, wrqPacket.length, serverAddress, serverPort);
-    socket.send(wrqSendPacket);
-
-    byte[] responseBuffer = new byte[512];
-    DatagramPacket responsePacket = new DatagramPacket(responseBuffer, responseBuffer.length);
-    socket.receive(responsePacket);
-
-    int responseCode = responseBuffer[1];  // Second byte contains the opcode
-
-    if (responseCode == 5) { // ERROR packet received
-        System.out.println("Error: Remote file already exists. Aborting upload.");
-        return;
-    } else if (responseCode == 6) { // OACK received
-        System.out.println("Received OACK. Proceeding with upload...");
-    } else if (responseCode == 4) { // ACK received for WRQ
-        System.out.println("Received ACK for WRQ. Proceeding with upload...");
-    } else {
-        System.out.println("Unexpected response. Aborting upload.");
-        return;
-    }
 
     while ((bytesRead = fis.read(buffer)) != -1) {
         byte[] dataPacket = new byte[4 + bytesRead];
@@ -207,6 +180,7 @@ private static byte[] createRequestPacket(String filename, String mode) {
 
         DatagramPacket sendPacket = new DatagramPacket(dataPacket, dataPacket.length, serverAddress, serverPort);
         socket.send(sendPacket);
+        // System.out.println("Sent DATA block " + blockNumber);
 
         // Wait for ACK
         byte[] ackBuffer = new byte[4];
@@ -216,19 +190,19 @@ private static byte[] createRequestPacket(String filename, String mode) {
         if (ackBuffer[1] == 4) {  // ACK opcode
             int ackBlockNumber = ((ackBuffer[2] & 0xFF) << 8) | (ackBuffer[3] & 0xFF);
             if (ackBlockNumber == blockNumber) {
+                // System.out.println("Received ACK for block " + blockNumber);
                 blockNumber++;
             } else {
                 System.out.println("Unexpected ACK block number: " + ackBlockNumber);
             }
         } else {
-            System.out.println("Unexpected response received! Aborting upload.");
+            System.out.println("Unexpected response received!");
             break;
         }
     }
 
     System.out.println("File upload complete.");
 }
-
 
     
     private static byte[] createDataPacket(int blockNumber, byte[] data, int dataLength) {
@@ -257,7 +231,7 @@ private static void receiveAcknowledgment(DatagramSocket socket) throws IOExcept
     byte[] ackBuffer = new byte[4];  // TFTP ACK packet is 4 bytes
     DatagramPacket ackPacket = new DatagramPacket(ackBuffer, ackBuffer.length);
     
-    socket.receive(ackPacket);  // Wait for acknowledgment
+    socket.receive(ackPacket); 
     
     int opcode = ((ackBuffer[0] & 0xFF) << 8) | (ackBuffer[1] & 0xFF);
     int blockNumber = ((ackBuffer[2] & 0xFF) << 8) | (ackBuffer[3] & 0xFF);
@@ -288,3 +262,4 @@ private static byte[] createWriteRequestPacket(String filename, String mode) {
 
 
 }
+
