@@ -15,27 +15,35 @@ javac nscom.java
 ```sh
 java nscom
 ```
-This will display the table format.
+This will display the table .
 
-#### Command Format:
+#### Table Format:
 ```sh
-java nscom <server_ip> <upload/download> <local_file> <remote_file>
+Enter TFTP Server IP Address:
+
+then,
+
+===== TFTP Client =====
+1 - Download a file
+2 - Upload a file
+3 - Exit
+Select an option:
 ```
 
 ### 4. Example Commands
 
 #### Download a File:
 ```sh
-Input Local File: local1.java
-Input Remote File: nscom.java
+Enter Local File: local1.java
+Enter remote filename: nscom.java
 ```
 This downloads `nscom.java` from the TFTP server and saves it as `local1.java` locally.
 Ensure `nscom.java` exists on the server.
 
 #### Upload a File:
 ```sh
-Input Local File: sjfitness.png
-Input Remote File: copy.png
+Enter local file to upload: sjfitness.png
+Enter remote filename: copy.png
 ```
 This uploads `sjfitness.png` from the local machine to the TFTP server as `copy.png`.
 The remote file will be overwritten if it exists.
@@ -67,8 +75,8 @@ The remote file will be overwritten if it exists.
 | **Download a file that exists** | ` Input Local File: FileA.jpg Input Remote File: FileJ.jpg` | `Download complete: FileJ.jpg` |
 | **Download a non-existent file** | `Input Local File: FileB.jpg Input Remote File: FileA.jpg` | `TFTP Error: File not found on the server.` |
 | **Upload a file that exists locally** | `Input Local File: FileA.jpg Input Remote File: FileJ.jpg` | `Upload complete: FileA.jpg` |
-| **Upload a non-existent local file** | `java nscom 192.168.1.190 upload missing.png FileA.jpg` | `Error: File missing.png does not exist.` |
-| **Try downloading to an existing file** | `java nscom 192.168.1.190 download FileA.jpg FileA.jpg` | `Error: File FileA.jpg already exists. Preventing overwrite.` |
+| **Upload a non-existent local file** | `Input Local File: missing.jpg Input Remote File: FileZ.jpg` | `Error: File missing.jpg does not exist.` |
+| **Try downloading to an existing file** | `Input Local File: FileA.jpg Input Remote File: FileB.jpg` | `Error: File FileA.jpg already exists. Preventing overwrite.` |
 
 ---
 ## Useful Commands for Debugging
