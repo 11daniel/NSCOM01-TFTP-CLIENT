@@ -34,16 +34,16 @@ Select an option:
 
 #### Download a File:
 ```sh
-Enter Local File: local1.java
-Enter remote filename: nscom.java
+Enter remote file: local1.java
+Enter local file: nscom.java
 ```
 This downloads `nscom.java` from the TFTP server and saves it as `local1.java` locally.
 Ensure `nscom.java` exists on the server.
 
 #### Upload a File:
 ```sh
-Enter local file to upload: sjfitness.png
-Enter remote filename: copy.png
+Enter local file: sjfitness.png
+Enter remote file: copy.png
 ```
 This uploads `sjfitness.png` from the local machine to the TFTP server as `copy.png`.
 The remote file will be overwritten if it exists.
@@ -72,11 +72,11 @@ The remote file will be overwritten if it exists.
 
 | Test Case | Command | Expected Output |
 |-----------|---------|----------------|
-| **Download a file that exists** | ` Input Local File: FileA.jpg Input Remote File: FileJ.jpg` | `Download complete: FileJ.jpg` |
-| **Download a non-existent file** | `Input Local File: FileB.jpg Input Remote File: FileA.jpg` | `TFTP Error: File not found on the server.` |
-| **Upload a file that exists locally** | `Input Local File: FileA.jpg Input Remote File: FileJ.jpg` | `Upload complete: FileA.jpg` |
-| **Upload a non-existent local file** | `Input Local File: missing.jpg Input Remote File: FileZ.jpg` | `Error: File missing.jpg does not exist.` |
-| **Try downloading to an existing file** | `Input Local File: FileA.jpg Input Remote File: FileB.jpg` | `Error: File FileA.jpg already exists. Preventing overwrite.` |
+| **Download a file that exists** | ` Enter local file: FileA.jpg Enter remote file: FileJ.jpg` | `Download complete: FileJ.jpg` |
+| **Download a non-existent file** | `Enter local file: missing.jpg Enter remote file: FileM.jpg` | `TFTP Error: File not found on the server.` |
+| **Upload a file that exists locally** | `Enter local file: FileA.jpg Enter remote file: FileJ.jpg` | `Upload complete: FileA.jpg` |
+| **Upload a non-existent local file** | `Enter local file: missing.jpg Enter remote file: FileZ.jpg` | `Error: File missing.jpg does not exist.` |
+| **Try downloading to an existing file** | `Enter local file: FileA.jpg Enter remote file: FileB.jpg` | `Error: File FileA.jpg already exists. Preventing overwrite.` |
 
 ---
 ## Useful Commands for Debugging
