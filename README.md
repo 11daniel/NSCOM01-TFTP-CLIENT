@@ -84,3 +84,14 @@ tftp
 ### Check if port 69 is active:
 ```sh
 netstat -an | find "69"
+
+
+1. check if you have tftp
+> tftp
+2. check if you have java 
+> java
+3. ensure IP address
+> ping <IP address>
+4. check if port 69 is active
+> netstat -an | find "69"
+5. make sure to manually start server
