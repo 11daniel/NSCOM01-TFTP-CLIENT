@@ -7,6 +7,7 @@ public class nscom1 {
     private static final int TFTP_PORT = 69;
     private static int blockSize = 512;
     private static int timeout = 10000;
+    private static int tsize;
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -173,7 +174,6 @@ public class nscom1 {
         return bos.toByteArray();
     }
 
-
     private static void receiveFile(DatagramSocket socket, FileOutputStream fos) throws IOException {
         byte[] buffer = new byte[516]; // Standard TFTP packet size
         DatagramPacket receivedPacket = new DatagramPacket(buffer, buffer.length);
@@ -212,7 +212,7 @@ public class nscom1 {
 
     private static void sendFile(DatagramSocket socket, FileInputStream fis, InetAddress serverAddress, int serverPort)
             throws IOException {
-        byte[] buffer = new byte[512];
+        byte[] buffer = new byte[blockSize];
         int bytesRead;
         int blockNumber = 1;
 
@@ -289,21 +289,32 @@ public class nscom1 {
     }
 
     private static byte[] createWriteRequestPacket(String filename, String mode) {
-        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        DataOutputStream dos = new DataOutputStream(byteStream);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(bos);
 
         try {
-            dos.writeShort(2); // Opcode for WRQ (Write Request)
-            dos.writeBytes(filename);
-            dos.writeByte(0); // Null terminator for filename
-            dos.writeBytes(mode);
-            dos.writeByte(0); // Null terminator for mode
+            dos.writeShort(2); // WRQ (Write Request)
+            dos.write(filename.getBytes());
+            dos.writeByte(0);
+            dos.write(mode.getBytes());
+            dos.writeByte(0);
+            dos.write("blksize".getBytes());
+            dos.writeByte(0);
+            dos.write(String.valueOf(blockSize).getBytes());
+            dos.writeByte(0);
+            dos.write("tsize".getBytes());
+            dos.writeByte(0);
+            dos.write(String.valueOf(new File(filename).length()).getBytes());
+            dos.writeByte(0);
+
+            File file = new File(filename);
+            dos.write(String.valueOf(file.length()).getBytes()); // Send file size
+            dos.writeByte(0);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return byteStream.toByteArray();
+        return bos.toByteArray();
     }
 
 }
-
